@@ -211,3 +211,18 @@ CUSTOMIZATION:
 ================================================================================
 --]]
 
+-- ============================================================================
+-- PLUGIN-SPECIFIC GLOBAL CONFIGURATIONS
+-- ============================================================================
+
+-- ts_context_commentstring: Fix deprecation warning
+-- This replaces the deprecated nvim-treesitter integration
+vim.g.skip_ts_context_commentstring_module = true
+
+-- Setup ts_context_commentstring separately (loaded after treesitter)
+vim.defer_fn(function()
+  local ok, ts_context_commentstring = pcall(require, 'ts_context_commentstring')
+  if ok then
+    ts_context_commentstring.setup {}
+  end
+end, 100) -- Small delay to ensure treesitter loads first
