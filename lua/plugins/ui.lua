@@ -240,24 +240,27 @@ return {
     "lukas-reineke/indent-blankline.nvim",
     event = "BufReadPost",
     config = function()
-      require("indent_blankline").setup({
-        char = "│",
-        show_trailing_blankline_indent = false,
-        show_first_indent_level = true,
-        use_treesitter = true,
-        show_current_context = true,
-        show_current_context_start = false,
-        filetype_exclude = {
-          "help",
-          "alpha",
-          "dashboard",
-          "neo-tree",
-          "Trouble",
-          "lazy",
-          "mason",
-          "notify",
-          "toggleterm",
-          "lazyterm",
+      require("ibl").setup({
+        indent = {
+          char = "│",
+        },
+        scope = {
+          enabled = true,
+          show_start = false,
+        },
+        exclude = {
+          filetypes = {
+            "help",
+            "alpha",
+            "dashboard",
+            "neo-tree",
+            "Trouble",
+            "lazy",
+            "mason",
+            "notify",
+            "toggleterm",
+            "lazyterm",
+          },
         },
       })
     end,

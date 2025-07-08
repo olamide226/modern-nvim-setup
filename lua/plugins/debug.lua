@@ -43,9 +43,18 @@ return {
       -- Debugging configuration for Python
       {
         "mfussenegger/nvim-dap-python",
+        dependencies = { "williamboman/mason.nvim" },
         config = function()
-          local debugpy_path = require("mason-registry").get_package("debugpy"):get_install_path()
-          require("dap-python").setup(debugpy_path .. "/venv/bin/python")
+          -- Simple approach: use Mason's standard path for debugpy
+          local mason_path = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+          
+          -- Check if Mason's debugpy exists, otherwise use system python
+          if vim.fn.executable(mason_path) == 1 then
+            require("dap-python").setup(mason_path)
+          else
+            -- Fallback to system python (assumes debugpy is installed via pip)
+            require("dap-python").setup("python")
+          end
         end,
       },
       

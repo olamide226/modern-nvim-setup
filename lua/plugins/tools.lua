@@ -218,7 +218,7 @@ return {
           },
         },
         
-        -- Enable nvim-ts-context-commentstring
+        -- Enable nvim-ts-context-commentstring (deprecated - handled separately)
         context_commentstring = {
           enable = true,
           enable_autocmd = false,

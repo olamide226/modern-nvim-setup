@@ -261,78 +261,50 @@ return {
       { "<leader>cm", "<cmd>Mason<cr>", desc = "Open Mason (LSP manager)" } 
     },
     build = ":MasonUpdate",  -- Update Mason when plugin is updated
-    opts = {
-      -- Automatically install these tools when Mason starts
-      ensure_installed = {
+    config = function()
+      require("mason").setup({
+        ui = {
+          border = "rounded",
+          icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+          }
+        }
+      })
+      
+      -- Auto-install LSP servers and tools
+      local mason_registry = require("mason-registry")
+      local tools_to_install = {
         "pyright",                    -- Python LSP
         "typescript-language-server", -- TypeScript/JavaScript LSP
         "lua-language-server",        -- Lua LSP
-        -- Add more tools as needed:
-        -- "black",                   -- Python formatter
-        -- "isort",                   -- Python import sorter
-        -- "prettier",                -- JavaScript/TypeScript formatter
-        -- "eslint_d",                -- JavaScript/TypeScript linter
-      },
-      ui = {
-        border = "rounded",
-        icons = {
-          package_installed = "✓",
-          package_pending = "➜",
-          package_uninstalled = "✗"
-        }
+        "debugpy",                    -- Python debugger
       }
-    },
-    config = function(_, opts)
-      require("mason").setup(opts)
-      local mr = require("mason-registry")
       
-      -- Auto-install tools when Mason registry is ready
-      mr:on("package:install:success", function()
-        vim.defer_fn(function()
-          -- Trigger FileType event to possibly load newly installed LSP server
-          require("lazy.core.handler.event").trigger({
-            event = "FileType",
-            buf = vim.api.nvim_get_current_buf(),
-          })
-        end, 100)
-      end)
-      
-      -- Function to ensure tools are installed
-      local function ensure_installed()
-        for _, tool in ipairs(opts.ensure_installed) do
-          local p = mr.get_package(tool)
-          if not p:is_installed() then
-            p:install()
+      -- Function to install tools
+      local function install_tools()
+        for _, tool in ipairs(tools_to_install) do
+          if mason_registry.is_installed(tool) then
+            goto continue
           end
+          
+          local package = mason_registry.get_package(tool)
+          if package then
+            package:install()
+          end
+          
+          ::continue::
         end
       end
       
-      -- Install tools when Mason is ready
-      if mr.refresh then
-        mr.refresh(ensure_installed)
+      -- Install tools when registry is ready
+      if mason_registry.refresh then
+        mason_registry.refresh(install_tools)
       else
-        ensure_installed()
+        install_tools()
       end
     end,
-  },
-  
-  -- ============================================================================
-  -- MASON-LSPCONFIG - BRIDGE BETWEEN MASON AND LSPCONFIG
-  -- ============================================================================
-  -- Automatically configures LSP servers installed by Mason
-  {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = { "mason.nvim" },
-    opts = {
-      -- Ensure these LSP servers are installed
-      ensure_installed = {
-        "pyright",     -- Python
-        "ts_ls",       -- TypeScript/JavaScript
-        "lua_ls",      -- Lua
-      },
-      -- Automatically setup LSP servers installed by Mason
-      automatic_installation = true,
-    },
   },
 }
 
