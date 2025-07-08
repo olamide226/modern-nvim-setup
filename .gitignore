@@ -1,0 +1,41 @@
+# Neovim Configuration .gitignore
+
+# Lazy.nvim plugin directory (plugins are managed by lazy.nvim)
+lazy-lock.json
+
+# Neovim data directories
+.netrwhist
+*.tmp
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Personal notes and improvements summary (as requested)
+IMPROVEMENTS_SUMMARY.md
+
+# Test files (optional - you can remove this line if you want to track test files)
+test_nvim_setup.py
+
+# Any personal customizations you might not want to share
+local_config.lua
+personal/
